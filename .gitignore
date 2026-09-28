@@ -1,0 +1,28 @@
+# API keys and local configuration
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# Package/build output
+build/
+dist/
+*.egg-info/
+
+# macOS temporary files
+.DS_Store
+
+# Local databases and generated output
+*.db
+*.sqlite3
+data/cache/
+reports/
+# Editor settings
+.vscode/

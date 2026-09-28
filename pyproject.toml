@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "astock-research-agent"
+version = "0.1.0"
+description = "A multi-agent research system for China A-share companies"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "akshare",
+    "langgraph",
+    "langchain-core",
+    "langchain-openai",
+    "pandas",
+    "pydantic",
+    "python-dotenv",
+    "tenacity",
+    "typer",
+    "rich",
+]
+
+[project.scripts]
+astock-agent = "astock_agent.cli:run"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
