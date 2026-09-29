@@ -69,6 +69,7 @@ def test_get_stock_history_rejects_invalid_symbol(invalid_symbol):
             end_date="20260918",
         )
 
+
 def test_normalize_stock_history_returns_stock_bars():
     raw_data = pd.DataFrame(
         {

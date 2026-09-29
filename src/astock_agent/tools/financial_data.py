@@ -17,9 +17,7 @@ def to_exchange_symbol(symbol: str) -> str:
     symbol = symbol.strip()
 
     if len(symbol) != 6 or not symbol.isdigit():
-        raise ValueError(
-            f"Stock symbol must contain exactly 6 digits, received: {symbol}"
-        )
+        raise ValueError(f"Stock symbol must contain exactly 6 digits, received: {symbol}")
 
     if symbol.startswith("6"):
         return f"{symbol}.SH"
@@ -30,9 +28,7 @@ def to_exchange_symbol(symbol: str) -> str:
     if symbol.startswith(("4", "8", "9")):
         return f"{symbol}.BJ"
 
-    raise ValueError(
-        f"Unable to determine exchange for stock symbol: {symbol}"
-    )
+    raise ValueError(f"Unable to determine exchange for stock symbol: {symbol}")
 
 
 def optional_date(value: object) -> date | None:
@@ -62,9 +58,7 @@ def normalize_financial_data(
     missing_columns = REQUIRED_COLUMNS.difference(data.columns)
 
     if missing_columns:
-        raise ValueError(
-            f"Financial data is missing required columns: {sorted(missing_columns)}"
-        )
+        raise ValueError(f"Financial data is missing required columns: {sorted(missing_columns)}")
 
     snapshots: list[FinancialSnapshot] = []
 
@@ -76,9 +70,7 @@ def normalize_financial_data(
             update_date=optional_date(row.get("UPDATE_DATE")),
             report_type=str(row["REPORT_TYPE"]),
             revenue_yuan=optional_float(row.get("TOTALOPERATEREVE")),
-            parent_net_profit_yuan=optional_float(
-                row.get("PARENTNETPROFIT")
-            ),
+            parent_net_profit_yuan=optional_float(row.get("PARENTNETPROFIT")),
             weighted_roe_pct=optional_float(row.get("ROEJQ")),
             gross_margin_pct=optional_float(row.get("XSMLL")),
         )
@@ -91,9 +83,23 @@ def normalize_financial_data(
     )
 
 
+def filter_financial_snapshots_as_of(
+    snapshots: list[FinancialSnapshot],
+    as_of_date: date,
+) -> list[FinancialSnapshot]:
+    """Keep only reports disclosed on or before the research date."""
+
+    return [
+        snapshot
+        for snapshot in snapshots
+        if snapshot.notice_date is not None and snapshot.notice_date <= as_of_date
+    ]
+
+
 def get_financial_snapshots(
     symbol: str,
     limit: int = 8,
+    as_of_date: date | None = None,
 ) -> list[FinancialSnapshot]:
     """Fetch and normalize recent A-share financial indicators."""
 
@@ -108,18 +114,25 @@ def get_financial_snapshots(
             indicator="按报告期",
         )
     except Exception as exc:
-        raise RuntimeError(
-            f"Failed to fetch financial data for stock {symbol}"
-        ) from exc
+        raise RuntimeError(f"Failed to fetch financial data for stock {symbol}") from exc
 
     if data.empty:
-        raise RuntimeError(
-            f"No financial data returned for stock {symbol}"
-        )
+        raise RuntimeError(f"No financial data returned for stock {symbol}")
 
     snapshots = normalize_financial_data(
         symbol=symbol.strip(),
         data=data,
     )
+
+    if as_of_date is not None:
+        snapshots = filter_financial_snapshots_as_of(
+            snapshots=snapshots,
+            as_of_date=as_of_date,
+        )
+
+    if not snapshots:
+        raise RuntimeError(
+            f"No financial reports were disclosed by {as_of_date} for stock {symbol}"
+        )
 
     return snapshots[:limit]

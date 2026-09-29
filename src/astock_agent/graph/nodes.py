@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 from astock_agent.agents.financial_analyst import analyze_financials
 from astock_agent.agents.market_analyst import analyze_market
 from astock_agent.agents.research_synthesizer import synthesize_research
@@ -24,10 +26,19 @@ def market_analysis_node(state: ResearchState) -> dict[str, object]:
 
 
 def financial_analysis_node(state: ResearchState) -> dict[str, object]:
-    """Fetch financial data and generate the financial analysis report."""
+    """Analyze financial reports available by the research end date."""
+
+    try:
+        as_of_date = datetime.strptime(
+            state["end_date"],
+            "%Y%m%d",
+        ).replace(tzinfo=UTC).date()
+    except ValueError as exc:
+        raise ValueError("end_date must use YYYYMMDD format") from exc
 
     summary = get_financial_summary(
         symbol=state["symbol"],
+        as_of_date=as_of_date,
     )
 
     report = analyze_financials(summary)
@@ -36,6 +47,8 @@ def financial_analysis_node(state: ResearchState) -> dict[str, object]:
         "financial_summary": summary,
         "financial_report": report,
     }
+
+
 def synthesis_node(state: ResearchState) -> dict[str, object]:
     """Combine market and financial reports into the final report."""
 

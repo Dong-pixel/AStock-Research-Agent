@@ -22,9 +22,7 @@ def get_settings() -> Settings:
     api_key = os.getenv("DEEPSEEK_API_KEY", "").strip()
 
     if not api_key or api_key == "your_api_key_here":
-        raise RuntimeError(
-            "DEEPSEEK_API_KEY is missing. Please configure it in the .env file."
-        )
+        raise RuntimeError("DEEPSEEK_API_KEY is missing. Please configure it in the .env file.")
 
     return Settings(
         deepseek_api_key=api_key,

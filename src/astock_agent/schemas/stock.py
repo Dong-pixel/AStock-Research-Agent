@@ -24,6 +24,7 @@ class StockBar(BaseModel):
     change_amount: float | None = None
     turnover_rate_pct: float | None = None
 
+
 class MarketSummary(BaseModel):
     """A compact summary of historical market data."""
 

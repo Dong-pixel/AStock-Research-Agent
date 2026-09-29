@@ -1,3 +1,5 @@
+from datetime import date
+
 from astock_agent.schemas.financial import (
     FinancialSnapshot,
     FinancialSummary,
@@ -78,9 +80,7 @@ def build_financial_summary(
         latest_report_date=latest.report_date,
         latest_notice_date=latest.notice_date,
         report_type=latest.report_type,
-        comparable_report_date=(
-            comparable.report_date if comparable is not None else None
-        ),
+        comparable_report_date=(comparable.report_date if comparable is not None else None),
         revenue_yuan=latest.revenue_yuan,
         revenue_yoy_pct=(
             calculate_growth_pct(
@@ -121,12 +121,16 @@ def build_financial_summary(
     )
 
 
-def get_financial_summary(symbol: str) -> FinancialSummary:
-    """Fetch financial data and build its latest summary."""
+def get_financial_summary(
+    symbol: str,
+    as_of_date: date | None = None,
+) -> FinancialSummary:
+    """Build a summary using reports available by the research date."""
 
     snapshots = get_financial_snapshots(
         symbol=symbol,
         limit=12,
+        as_of_date=as_of_date,
     )
 
     return build_financial_summary(snapshots)

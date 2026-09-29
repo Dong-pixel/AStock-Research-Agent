@@ -21,6 +21,8 @@ class FinancialSnapshot(BaseModel):
 
     source: str = "AKShare / 东方财富"
     period_basis: str = "按报告期"
+
+
 class FinancialSummary(BaseModel):
     """A deterministic summary comparing equivalent reporting periods."""
 

@@ -24,9 +24,7 @@ def validate_date(value: str, field_name: str) -> None:
     try:
         datetime.strptime(value, "%Y%m%d").replace(tzinfo=UTC)
     except ValueError as exc:
-        raise ValueError(
-            f"{field_name} must use YYYYMMDD format, received: {value}"
-        ) from exc
+        raise ValueError(f"{field_name} must use YYYYMMDD format, received: {value}") from exc
 
 
 def optional_float(value: object) -> float | None:
@@ -47,9 +45,7 @@ def normalize_stock_history(
     missing_columns = REQUIRED_COLUMNS.difference(data.columns)
 
     if missing_columns:
-        raise ValueError(
-            f"Market data is missing required columns: {sorted(missing_columns)}"
-        )
+        raise ValueError(f"Market data is missing required columns: {sorted(missing_columns)}")
 
     bars: list[StockBar] = []
 
@@ -84,9 +80,7 @@ def get_stock_history(
     symbol = symbol.strip()
 
     if len(symbol) != 6 or not symbol.isdigit():
-        raise ValueError(
-            f"Stock symbol must contain exactly 6 digits, received: {symbol}"
-        )
+        raise ValueError(f"Stock symbol must contain exactly 6 digits, received: {symbol}")
 
     validate_date(start_date, "start_date")
     validate_date(end_date, "end_date")
@@ -108,14 +102,11 @@ def get_stock_history(
         )
     except Exception as exc:
         raise RuntimeError(
-            f"Failed to fetch market data for stock {symbol} "
-            f"({type(exc).__name__}: {exc})"
+            f"Failed to fetch market data for stock {symbol} ({type(exc).__name__}: {exc})"
         ) from exc
 
     if data.empty:
-        raise RuntimeError(
-            f"No market data returned for stock {symbol}"
-        )
+        raise RuntimeError(f"No market data returned for stock {symbol}")
 
     return data
 

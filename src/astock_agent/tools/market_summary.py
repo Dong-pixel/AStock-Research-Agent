@@ -14,9 +14,7 @@ def build_market_summary(
     symbols = {bar.symbol for bar in bars}
 
     if len(symbols) != 1:
-        raise ValueError(
-            "All stock bars must belong to the same symbol"
-        )
+        raise ValueError("All stock bars must belong to the same symbol")
 
     ordered_bars = sorted(
         bars,
@@ -29,9 +27,7 @@ def build_market_summary(
     if first_bar.close_price == 0:
         raise ValueError("The first closing price must not be zero")
 
-    period_return_pct = (
-        last_bar.close_price / first_bar.close_price - 1
-    ) * 100
+    period_return_pct = (last_bar.close_price / first_bar.close_price - 1) * 100
 
     return MarketSummary(
         symbol=first_bar.symbol,
@@ -41,12 +37,8 @@ def build_market_summary(
         start_close=first_bar.close_price,
         end_close=last_bar.close_price,
         period_return_pct=round(period_return_pct, 4),
-        highest_price=max(
-            bar.high_price for bar in ordered_bars
-        ),
-        lowest_price=min(
-            bar.low_price for bar in ordered_bars
-        ),
+        highest_price=max(bar.high_price for bar in ordered_bars),
+        lowest_price=min(bar.low_price for bar in ordered_bars),
         average_volume=round(
             fmean(bar.volume for bar in ordered_bars),
             2,
