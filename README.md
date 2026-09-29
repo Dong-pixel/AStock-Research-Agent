@@ -1,5 +1,5 @@
 # AStock Research Agent
-
+[![CI](https://github.com/Dong-pixel/AStock-Research-Agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Dong-pixel/AStock-Research-Agent/actions/workflows/ci.yml)
 基于 LangGraph、DeepSeek 和 AKShare 构建的 A 股多智能体研究系统。
 
 系统并行执行行情分析与财务分析，最后由综合研究智能体生成结构化中文报告。财务模块会根据实际披露日期过滤数据，降低历史研究中的前视偏差。
